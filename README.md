@@ -2,8 +2,8 @@
 
 ConnectMe is a modern video conferencing web application inspired by platforms like Zoom and Google Meet. It enables users to authenticate, create or join meetings, and communicate in real time.
 
-🔗 **Live Demo:** https://your-render-link.onrender.com  
-📂 **GitHub Repository:** https://github.com/your-username/connectme  
+🔗 **Live Demo:** https://connectmefrontend-moxx.onrender.com/
+📂 **GitHub Repository:** https://github.com/deepak-5656/ConnectMe.git  
 
 ---
 
