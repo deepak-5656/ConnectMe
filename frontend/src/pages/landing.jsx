@@ -9,24 +9,42 @@ export default function LandingPage() {
     return (
         <div className='landingPageContainer'>
             <nav>
-                <div className='navHeader'>
+                <div className='navHeader' style={{display:"flex", alignItems:"center", gap:"8px"}}>
+                 <img src="/logo.png" alt="logo" style={{width:"55px", height:"45px", borderRadius:"50%"}} />
                     <h2>ConnectMe</h2>
                 </div>
+
                 <div className='navlist'>
-                    <p onClick={() => {
-                        router("/aljk23")
-                    }}>Join as Guest</p>
-                    <p onClick={() => {
-                        router("/auth")
+    <p onClick={() => router("/aljk23")} style={{
+    cursor:"pointer",
+    padding:"6px 12px",
+    borderRadius:"8px",
+    background:"#D97500",   
+    color:"white",
+    fontSize:"0.9rem",
+    margin:0
+}}>Guest</p>
 
-                    }}>Register</p>
-                    <div onClick={() => {
-                        router("/auth")
+<p onClick={() => router("/auth")} style={{
+    cursor:"pointer",
+    padding:"6px 12px",
+    borderRadius:"8px",
+    background:"#D97500",  
+    color:"white",
+    fontSize:"0.9rem",
+    margin:0
+}}>Register</p>
 
-                    }} role='button'>
-                        <p>Login</p>
-                    </div>
-                </div>
+<div onClick={() => router("/auth")} role='button' style={{
+    cursor:"pointer",
+    padding:"6px 16px",
+    borderRadius:"8px",
+    background:"#D97500",        
+    fontSize:"0.9rem"
+}}>
+    <p style={{margin:0, color:"white"}}>Login</p>
+</div>
+</div>
             </nav>
 
 
