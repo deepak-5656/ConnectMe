@@ -104,7 +104,7 @@ export default function Authentication(){
                             </p>
                         </div>
 
-                        { }  /* TABS */
+                        {  /* TABS */} 
                         <div style={{
                             display:"flex",
                             background:"#e5e7eb",
