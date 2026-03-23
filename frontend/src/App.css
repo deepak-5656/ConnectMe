@@ -102,3 +102,143 @@
   border-radius: 20px;
 }
 
+@media (max-width: 768px) {
+
+    .landingPageContainer {
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .landingPageContainer nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding-inline: 1rem;
+    }
+
+    .landingPageContainer nav .navlist {
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .landingMainContainer {
+        flex-direction: column;
+        padding-inline: 1.5rem;
+        height: auto;
+        gap: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .landingMainContainer > div:nth-child(1) {
+        font-size: 1.6rem;
+        text-align: center;
+    }
+
+    .landingMainContainer > div:nth-child(1) div[role='button'] {
+        margin-inline: auto;
+    }
+
+    .landingMainContainer > div:nth-child(2) img {
+        height: auto;
+        width: 90vw;
+    }
+
+    .meetContainer {
+        flex-direction: column;
+        height: auto;
+        padding-inline: 1rem;
+        gap: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .rightPanel > img {
+        width: 90vw;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    .leftPanel {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .navBar {
+        flex-direction: column;
+        gap: 10px;
+        padding-block: 10px;
+    }
+}
+
+
+/*  */
+.homeContainer {
+    width: 100vw;
+    min-height: 100vh;
+    background: url("../public/background.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    color: white;
+}
+
+.navBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: rgba(0,0,0,0.3);
+}
+
+.joinBox {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .meetContainer {
+        flex-direction: column;
+        height: auto;
+        padding: 24px 16px;
+        gap: 24px;         
+    }
+
+    .leftPanel {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;          
+    }
+
+    .leftPanel h2 {
+        margin-bottom: 16px;  
+    }
+
+    .joinBox {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;         
+    }
+
+    .joinBox .MuiTextField-root {
+        width: 100% !important;
+    }
+
+    .joinBox .MuiButton-root {
+        width: 100% !important;
+        padding: 12px !important;
+    }
+
+    .rightPanel {
+        width: 100%;
+        margin-top: 8px;   
+    }
+
+    .rightPanel img {
+        width: 100%;
+        height: auto;
+        background: transparent;
+        border-radius: 12px;
+    }
+}

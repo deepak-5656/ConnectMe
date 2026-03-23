@@ -54,11 +54,12 @@ export default function VideoMeetComponent(){
     let [messages,setMessages] =useState([]);
     let [message,setMessage] =useState("");
     let [newMessages,setNewMessages] =useState(0);
-
+    
     let[askForUsername, setAskForUsername] =useState(true);
     let[username,setUsername] =useState("");
 
     const videoRef =useRef([]);
+    const messagesEndRef = useRef(null);
 
     let [videos,setVideos] = useState([]);
 
@@ -203,25 +204,33 @@ export default function VideoMeetComponent(){
         }
     },[audio,video])
 
-    let gotMessageFromServer = (fromId,message)=>{
+    useEffect(()=>{
+    if(messagesEndRef.current){
+        messagesEndRef.current.scrollIntoView({behavior:"smooth"});
+    }
+    },[messages]);
+
+    let gotMessageFromServer = (fromId, message)=>{
         var signal = JSON.parse(message)
 
-        if(fromId !== socketIdRef.current){
-            if(signal.sdp){
-                connections[fromId].setRemoteDescription(new RTCSessionDescription(signal.sdp)).then(()=>{
-                    if(signal.sdp.type === "offer"){
-                        connections[fromId].createAnswer().then((description)=>{
-                            connections[fromId].setLocalDescription(description).then(()=>{
-                                socketRef.current.emit("signal",fromId,JSON.stringify({"sdp":connections[fromId].localDescription}))
-                            }).catch(e=>console.log(e))
+      if(fromId !== socketIdRef.current){
+        if(signal.sdp){
+            if(!connections[fromId]) return; 
+            connections[fromId].setRemoteDescription(new RTCSessionDescription(signal.sdp)).then(()=>{
+                if(signal.sdp.type === "offer"){
+                    connections[fromId].createAnswer().then((description)=>{
+                        connections[fromId].setLocalDescription(description).then(()=>{
+                            socketRef.current.emit("signal",fromId,JSON.stringify({"sdp":connections[fromId].localDescription}))
                         }).catch(e=>console.log(e))
-                    }
-                }).catch(e=>console.log(e))
-            }
-            if(signal.ice){
-                connections[fromId].addIceCandidate(new RTCIceCandidate(signal.ice)).catch(e=>console.log(e));
-            }
+                    }).catch(e=>console.log(e))
+                }
+            }).catch(e=>console.log(e))
         }
+        if(signal.ice){
+            if(!connections[fromId]) return;  
+            connections[fromId].addIceCandidate(new RTCIceCandidate(signal.ice)).catch(e=>console.log(e));
+        }
+      }
     }
     let addMessage=(data, sender, socketIdSender)=>{
         setMessages((prevMessages) => [
@@ -253,7 +262,7 @@ export default function VideoMeetComponent(){
         autoPlay: true,
         playsinline: true
     }]);
-}, 2000)
+}, 4000)
 
             socketRef.current.on("user-left",(id)=>{
                 setVideos((videos)=>videos.filter((video)=>video.socketId !== id))
@@ -309,23 +318,26 @@ export default function VideoMeetComponent(){
                 })
 
                 if(id===socketIdRef.current){
+                    setTimeout(()=>{
                     for(let id2 in connections){
-                        if(id2===socketIdRef.current) continue
+                    if(id2===socketIdRef.current) continue
 
-                        try{
-                            connections[id2].addStream(window.localStream)
-                        }catch(e){
+                    try{
+                    connections[id2].addStream(window.localStream)
+                     }catch(e){
 
-                        }
-                        connections[id2].createOffer().then((description)=>{
-                            connections[id2].setLocalDescription(description)
-                            .then(()=>{
-                                socketRef.current.emit("signal",id2,JSON.stringify({"sdp":connections[id2].localDescription}))
-                            })
-                            .catch(e=>console.log(e))
-                        })
                     }
-                }
+                    connections[id2].createOffer().then((description)=>{
+                    connections[id2].setLocalDescription(description)
+                    .then(()=>{
+                    socketRef.current.emit("signal",id2,JSON.stringify({"sdp":connections[id2].localDescription}))
+                    })
+                    .catch(e=>console.log(e))
+                    })
+                    }
+                     }, 1000)
+              }
+
             })
         })
     }
@@ -432,20 +444,85 @@ export default function VideoMeetComponent(){
             let tracks = localVideoRef.current.srcObject.getTracks()
             tracks.forEach(track => track.stop())
         } catch (e) { }
+        window.localStream = null;
+        connections = {};
+        socketRef.current.disconnect();
+
         routeTo("/home")
     }
 
 return (
     <div>
         {askForUsername===true?
-          <div>
-            <h2>Enter into Lobby</h2>
-            <TextField id="outlined-basic" label="Username" value={username} onChange={e=>setUsername(e.target.value)} />
-            <Button variant="contained" onClick={connect}>Connect</Button>
-            <div> 
-                <video ref={localVideoRef} autoPlay muted></video>
-            </div>
-          </div> :
+  <div style={{
+    minHeight:"100vh",
+    background:"#1a1a2e",
+    display:"flex",
+    justifyContent:"center",
+    alignItems:"center",
+    padding:"20px",
+    boxSizing:"border-box"
+  }}>
+    <div style={{
+        width:"100%",
+        maxWidth:"450px",
+        display:"flex",
+        flexDirection:"column",
+        alignItems:"center",
+        gap:"20px"
+    }}>
+        <h2 style={{
+            color:"white",
+            fontSize:"clamp(1.5rem, 4vw, 2rem)",
+            fontWeight:"700",
+            textAlign:"center",
+            margin:"0"
+        }}>Enter into Lobby</h2>
+
+        <video ref={localVideoRef} autoPlay muted style={{
+            width:"100%",
+            borderRadius:"16px",
+            maxHeight:"280px",
+            objectFit:"cover",
+            border:"2px solid rgba(255,255,255,0.1)"
+        }}></video>
+
+        <TextField
+            id="outlined-basic"
+            label="Username"
+            value={username}
+            onChange={e=>setUsername(e.target.value)}
+            fullWidth
+            sx={{
+                "& .MuiOutlinedInput-root":{
+                    color:"white",
+                    background:"rgba(255,255,255,0.08)",
+                    borderRadius:"10px",
+                    "& fieldset":{borderColor:"rgba(255,255,255,0.2)"},
+                    "&:hover fieldset":{borderColor:"rgba(255,255,255,0.5)"},
+                    "&.Mui-focused fieldset":{borderColor:"#4f46e5"},
+                },
+                "& .MuiInputLabel-root":{color:"rgba(255,255,255,0.6)"},
+                "& .MuiInputLabel-root.Mui-focused":{color:"#818cf8"},
+            }}
+        />
+
+        <Button
+            variant="contained"
+            onClick={connect}
+            fullWidth
+            style={{
+                background:"#4f46e5",
+                padding:"12px",
+                fontSize:"1rem",
+                fontWeight:"700",
+                borderRadius:"10px",
+                textTransform:"none",
+                letterSpacing:"0.5px"
+            }}
+        >Connect</Button>
+    </div>
+  </div>  :
 
             <div className={styles.meetVideoContainer}>
               
@@ -466,6 +543,8 @@ return (
                                     </div>
                                 )
                             }): <p>No Messages Yet</p> }
+
+                            <div ref={messagesEndRef}></div> 
 
                           </div>
 
